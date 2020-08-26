@@ -97,8 +97,8 @@ where
             }
         }
     };
-
-    sys.exec.spawn(f).unwrap();
+    agnostik::spawn(f);
+    //sys.exec.spawn(f).unwrap();  // TODO remove or
     Ok(kr)
 }
 

@@ -26,6 +26,7 @@ use crate::{
     validate::InvalidPath,
     AnyMessage, Envelope, Message,
 };
+use agnostik::join_handle::JoinHandle;
 
 #[derive(Clone)]
 pub struct ActorCell {
@@ -525,7 +526,7 @@ impl<Msg> Run for Context<Msg>
 where
     Msg: Message,
 {
-    fn run<Fut>(&self, future: Fut) -> Result<RemoteHandle<<Fut as Future>::Output>, SpawnError>
+    fn run<Fut>(&self, future: Fut) -> JoinHandle<Fut::Output>
     where
         Fut: Future + Send + 'static,
         <Fut as Future>::Output: Send,

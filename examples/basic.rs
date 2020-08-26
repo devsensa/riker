@@ -1,6 +1,7 @@
 extern crate riker;
 use riker::actors::*;
 use std::time::Duration;
+use agnostik::block_on;
 
 #[derive(Default)]
 struct MyActor;
@@ -11,6 +12,12 @@ impl Actor for MyActor {
 
     fn recv(&mut self, ctx: &Context<Self::Msg>, msg: Self::Msg, _sender: Sender) {
         println!("{} received: {}", ctx.myself.name(), msg);
+        let handle = ctx.run(async move {
+            println!("print from async before sleep");
+            std::thread::sleep(Duration::from_millis(5000));
+            println!("print from async after sleep");
+        });
+        block_on(handle);
     }
 }
 
@@ -22,5 +29,7 @@ fn main() {
 
     my_actor.tell("Hello my actor!".to_string(), None);
 
-    std::thread::sleep(Duration::from_millis(500));
+    std::thread::sleep(Duration::from_millis(50000));
+
+
 }

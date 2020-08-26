@@ -170,6 +170,7 @@ use crate::{
     AnyMessage, Message,
 };
 use slog::{debug, Logger};
+use agnostik::join_handle::JoinHandle;
 
 // 0. error results on any
 // 1. visibility
@@ -677,19 +678,20 @@ impl ActorSelectionFactory for ActorSystem {
 // futures::task::Spawn::spawn requires &mut self so
 // we'll create a wrapper trait that requires only &self.
 pub trait Run {
-    fn run<Fut>(&self, future: Fut) -> Result<RemoteHandle<<Fut as Future>::Output>, SpawnError>
+    fn run<Fut>(&self, future: Fut) -> JoinHandle<Fut::Output>
     where
         Fut: Future + Send + 'static,
         <Fut as Future>::Output: Send;
 }
 
 impl Run for ActorSystem {
-    fn run<Fut>(&self, future: Fut) -> Result<RemoteHandle<<Fut as Future>::Output>, SpawnError>
+    fn run<Fut>(&self, future: Fut) -> JoinHandle<Fut::Output>
     where
         Fut: Future + Send + 'static,
         <Fut as Future>::Output: Send,
     {
-        self.exec.spawn_with_handle(future)
+        //self.exec.spawn_with_handle(future)
+        agnostik::spawn(future)
     }
 }
 

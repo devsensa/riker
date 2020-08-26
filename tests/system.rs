@@ -57,7 +57,7 @@ fn system_futures_exec() {
     let sys = ActorSystem::new().unwrap();
 
     for i in 0..100 {
-        let f = sys.run(async move { format!("some_val_{}", i) }).unwrap();
+        let f = sys.run(async move { format!("some_val_{}", i) });
 
         assert_eq!(block_on(f), format!("some_val_{}", i));
     }
@@ -71,12 +71,11 @@ fn system_futures_panic() {
         let _ = sys
             .run(async move {
                 panic!("// TEST PANIC // TEST PANIC // TEST PANIC //");
-            })
-            .unwrap();
+            });
     }
 
     for i in 0..100 {
-        let f = sys.run(async move { format!("some_val_{}", i) }).unwrap();
+        let f = sys.run(async move { format!("some_val_{}", i) });
 
         assert_eq!(block_on(f), format!("some_val_{}", i));
     }
